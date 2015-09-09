@@ -9,8 +9,8 @@
 <div id="chartContainer" style="height: 300px; width:100%;"></div>
 
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script type="text/javascript" src="http://certification.arthikatrading.com:81/jquery-ajaxreadystate.js"></script>
-<script type="text/javascript" src="http://certification.arthikatrading.com:81/jquery.canvasjs.min.js"></script>
+<script type="text/javascript" src="http://demo.arthikatrading.com:81/jquery-ajaxreadystate.js"></script>
+<script type="text/javascript" src="http://demo.arthikatrading.com:81/jquery.canvasjs.min.js"></script>
 <script type="text/javascript">
 
 window.onload = function () {
@@ -38,11 +38,10 @@ window.onload = function () {
 
     $.ajaxreadystate({
         type: "POST",
-        url: "http://certification.arthikatrading.com:81/cgi-bin/IHFTRestStreamer/getPrice",
+        url: "http://demo.arthikatrading.com:81/cgi-bin/IHFTRestStreamer/getPrice",
         data: JSON.stringify( { getPrice: {
                                   user: "fedenice",
-                                  password: "fedenice",
-                                  customer: 11,
+                                  token: "fedenice",
                                   security: ["EUR_USD","GBP_USD"] } } ),
         contentType: "application/json",
         dataType: "json",
