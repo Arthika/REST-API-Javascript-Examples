@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Javascript wrapper sample</title>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+</head>
+<body>
+
+<h1 id="security">Security</h1>
+<table width="100%">
+	<tr>
+		<td width="50%">
+			<table width="100%" border=1>
+				<caption style="font-size: 25px;"><b>Streaming Prices</b></caption>
+				<tr>
+					<th width="33%">Security</th>
+					<th width="33%">Side</th>
+					<th width="33%">Price</th>
+				</tr>
+				<tr>
+					<td id="securityStreamingAsk"></td>
+					<td>Ask</td>
+					<td><span id="streamingAsk">0</span></td>
+				</tr>
+				<tr>
+					<td id="securityStreamingBid"></td>
+					<td>Bid</td>
+					<td><span id="streamingBid">0</span></td>
+				</tr>
+			</table>
+		</td>
+		<td width="50%">
+			<table width="100%" border=1>
+				<caption style="font-size: 25px;"><b>Polling Prices</b> <button type="submit" onclick="javascript: reloadPricePolling()">Reload Prices</button></caption>
+				<tr>
+					<th width="33%">Security</th>
+					<th width="33%">Side</th>
+					<th width="33%">Price</th>
+				</tr>
+				<tr>
+					<td id="securityPollingAsk"></td>
+					<td>Ask</td>
+					<td><span id="pollingAsk">0</span></td>
+				</tr>
+				<tr>
+					<td id="securityPollingBid"></td>
+					<td>Bid</td>
+					<td><span id="pollingBid">0</span></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<br/>
+<table width="100%" border=1>
+	<caption style="font-size: 25px;"><b>Set Order</b></caption>
+	<tr>
+		<th width="15%">Security</th>
+		<th width="15%">Side</th>
+		<th width="15%">Trading Interface</th>
+		<th width="15%">Quantity</th>
+		<th width="15%">Price</th>
+		<th width="15%">Type</th>
+		<th width="10%">GO</span></th>
+	</tr>
+	<tr>
+		<td id="securitySetOrderBuy"></td>
+		<td>BUY</td>
+		<td>
+			<select id="tiBuy">
+				<option value="LMAX_LMAX">LMAX_LMAX</option>
+			</select>
+		</td>
+		<td>
+			<select id="quantityBuy">
+				<option value=100000>100K</option>
+				<option value=200000>200K</option>
+				<option value=500000>500K</option>
+				<option value=1000000>1M</option>
+				<option value=2000000>2M</option>
+				<option value=5000000>5M</option>
+				<option value=10000000>10M</option>
+			</select>
+		</td>
+		<td>
+			<input type="text" id="priceBuy">
+		</td>
+		<td>
+			<select id="typeBuy">
+				<option value="market">Market</option>
+				<option value="limit">Limit</option>
+			</select>
+		</td>
+		<td>
+			<button type="submit" id="buy" style="width: 60px;" onclick="javascript: buy()">BUY</button>
+		</td>
+	</tr>
+	<tr>
+		<td id="securitySetOrderSell"></td>
+		<td>SELL</td>
+		<td>
+			<select id="tiSell">
+				<option value="LMAX_LMAX">LMAX_LMAX</option>
+			</select>
+		</td>
+		<td>
+			<select id="quantitySell">
+				<option value=100000>100K</option>
+				<option value=200000>200K</option>
+				<option value=500000>500K</option>
+				<option value=1000000>1M</option>
+				<option value=2000000>2M</option>
+				<option value=5000000>5M</option>
+				<option value=10000000>10M</option>
+			</select>
+		</td>
+		<td>
+			<input type="text" id="priceSell">
+		</td>
+		<td>
+			<select id="typeSell">
+				<option value="market">Market</option>
+				<option value="limit">Limit</option>
+			</select>
+		</td>
+		<td>
+			<button type="submit" id="sell" style="width: 60px;" onclick="javascript: sell()">SELL</button>
+		</td>
+	</tr>
+</table>
+<br/>
+<table width="100%" class="scroll">
+	<caption style="font-size: 25px;"><b>Streaming Closed Orders</b></caption>
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>OrderId</th>
+			<th>FixId</th>
+			<th>TI</th>
+			<th>Security</th>
+			<th>Quantity</th>
+			<th>Side</th>
+			<th>Price</th>
+			<th>Type</th>
+			<th>Comm.</th>
+			<th>Status</th>
+		</tr>
+	</thead>
+	<tbody id="streamingClosedOrdersTable" >
+	</tbody>
+</table>
+<table width="100%" class="scroll">
+	<caption style="font-size: 25px;"><b>Streaming Pending Orders</b></caption>
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>OrderId</th>
+			<th>FixId</th>
+			<th>TI</th>
+			<th>Security</th>
+			<th>Quantity</th>
+			<th>Side</th>
+			<th>Price</th>
+			<th>Validity</th>
+			<th>Modify</th>
+			<th>Cancel</th>
+		</tr>
+	</thead>
+	<tbody id="streamingPendingOrdersTable">
+	</tbody>
+</table>
+<br/>
+<table width="100%" class="scroll">
+	<caption style="font-size: 25px;"><b>Polling Closed Orders</b> <button type="submit" onclick="javascript: reloadOrderPolling()">Reload Orders</button></caption>
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>OrderId</th>
+			<th>FixId</th>
+			<th>TI</th>
+			<th>Security</th>
+			<th>Quantity</th>
+			<th>Side</th>
+			<th>Price</th>
+			<th>Type</th>
+			<th>Comm.</th>
+			<th>Status</th>
+		</tr>
+	</thead>
+	<tbody id="pollingClosedOrdersTable" >
+	</tbody>
+</table>
+<table width="100%" class="scroll">
+	<caption style="font-size: 25px;"><b>Polling Pending Orders</b> <button type="submit" onclick="javascript: reloadOrderPolling()">Reload Orders</button></caption>
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>OrderId</th>
+			<th>FixId</th>
+			<th>TI</th>
+			<th>Security</th>
+			<th>Quantity</th>
+			<th>Side</th>
+			<th>Price</th>
+			<th>Validity</th>
+			<th>Modify</th>
+			<th>Cancel</th>
+		</tr>
+	</thead>
+	<tbody id="pollingPendingOrdersTable">
+	</tbody>
+</table>
+<br/>
+<table width="100%">
+	<tr>
+		<td width="50%">
+			<table width="100%" class="scroll2">
+				<caption style="font-size: 25px;"><b>Streaming Security Position</b></caption>
+				<thead>
+					<tr>
+						<th>Account</th>
+						<th>Security</th>
+						<th>Position</th>
+						<th>Side</th>
+						<th>P&L</th>
+					</tr>
+				</thead>
+				<tbody id="streamingSecurityPositionTable">
+				</tbody>
+			</table>
+		</td>
+		<td width="50%">
+			<table width="100%" class="scroll2">
+				<caption style="font-size: 25px;"><b>Streaming Asset Position</b></caption>
+				<thead>
+					<tr>
+						<th>Account</th>
+						<th>Currency</th>
+						<th>Exposure</th>
+						<th>Total Risk</th>
+						<th>P&L</th>
+					</tr>
+				</thead>
+				<tbody id="streamingAssetPositionTable">
+				</tbody>
+			</table>
+		</td>
+	</tr>
+</table>
+<table width="50%" border=1>
+	<caption style="font-size: 25px;"><b>Streaming Accounting</b></caption>
+	<tr>
+		<th width="20%">Currency</th>
+		<th width="20%">Strategy PL</th>
+		<th width="20%">Total Equity</th>
+		<th width="20%">Used Margin</th>
+		<th width="20%">Free Margin</th>
+	</tr>
+	<tr>
+		<td id="streamingm2mcurrency"></td>
+		<td id="streamingstrategyPL">0</td>
+		<td id="streamingtotalequity">0</td>
+		<td id="streamingusedmargin">0</td>
+		<td id="streamingfreemargin">0</td>
+	</tr>
+</table>
+
+<br/>
+<table width="100%">
+	<tr>
+		<td width="50%">
+			<table width="100%" class="scroll2">
+				<caption style="font-size: 25px;"><b>Polling Security Position</b> <button type="submit" onclick="javascript: reloadPositionPolling()">Reload Positions</button></caption>
+				<thead>
+					<tr>
+						<th>Account</th>
+						<th>Security</th>
+						<th>Position</th>
+						<th>Side</th>
+						<th>P&L</th>
+					</tr>
+				</thead>
+				<tbody id="pollingSecurityPositionTable">
+				</tbody>
+			</table>
+		</td>
+		<td width="50%">
+			<table width="100%" class="scroll2">
+				<caption style="font-size: 25px;"><b>Polling Asset Position</b> <button type="submit" onclick="javascript: reloadPositionPolling()">Reload Position</button></caption>
+				<thead>
+					<tr>
+						<th>Account</th>
+						<th>Currency</th>
+						<th>Exposure</th>
+						<th>Total Risk</th>
+						<th>P&L</th>
+					</tr>
+				</thead>
+				<tbody id="pollingAssetPositionTable">
+				</tbody>
+			</table>
+		</td>
+	</tr>
+</table>
+<table width="50%" border=1>
+	<caption style="font-size: 25px;"><b>Polling Accounting</b> <button type="submit" onclick="javascript: reloadPositionPolling()">Reload Positions</button></caption>
+	<tr>
+		<th width="20%">Currency</th>
+		<th width="20%">Strategy PL</th>
+		<th width="20%">Total Equity</th>
+		<th width="20%">Used Margin</th>
+		<th width="20%">Free Margin</th>
+	</tr>
+	<tr>
+		<td id="pollingm2mcurrency"></td>
+		<td id="pollingstrategyPL">0</td>
+		<td id="pollingtotalequity">0</td>
+		<td id="pollingusedmargin">0</td>
+		<td id="pollingfreemargin">0</td>
+	</tr>
+</table>
+<br/>
+
+<table width="100%">
+	<tr>
+		<td width="50%">
+			<div id="strategyEquityChart" style="height: 300px; width:100%;"></div>
+		</td>
+		<td width="50%">
+			<div id="poolEquityChart" style="height: 300px; width:100%;"></div>
+		</td>
+	</tr>
+</table>
+<br/>
+
+<div id="priceChart" style="height: 300px; width:100%;"></div>
+<div id="indicatorChart" style="height: 700px; width:100%;"></div>
+
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="jquery-ajaxreadystate.js"></script>
+<script type="text/javascript" src="2.0.0-crypto-sha1.js"></script>
+<script type="text/javascript" src="q.js"></script>
+<script type="text/javascript" src="wrapper.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script type="text/javascript">
+
+var pips=5;
+var sec="EUR/USD";
+security.innerHTML=sec;
+securityStreamingAsk.innerHTML=sec;
+securityStreamingBid.innerHTML=sec;
+securityPollingAsk.innerHTML=sec;
+securityPollingBid.innerHTML=sec;
+securitySetOrderSell.innerHTML=sec;
+securitySetOrderBuy.innerHTML=sec;
+
+var dpsSE = [];
+var strategyEquityChart = new Highcharts.StockChart("strategyEquityChart",{
+	title: {
+		text: "Strategy Equity"
+	},
+	axisY:{
+		includeZero: false,
+		gridLineDashStyle: 'longdash'
+	},
+	yAxis: [
+		{
+			title: {
+				text: 'Equity'
+			},
+			lineWidth: 1,
+			gridLineDashStyle: 'longdash',
+			labels: {
+				formatter: function() {
+					return this.value.toFixed(pips);
+				}
+			}
+		}],
+	series: [
+		{
+			id: 'strategyEquitySerie',
+			name: 'equity',
+			type: 'line',
+			color: 'blue',
+			data: dpsSE
+		}
+	]
+});
+
+var dpsPE = [];
+var poolEquityChart = new Highcharts.StockChart("poolEquityChart",{
+	title: {
+		text: "Pool Equity"
+	},
+	axisY:{
+		includeZero: false,
+		gridLineDashStyle: 'longdash'
+	},
+	yAxis: [
+		{
+			title: {
+				text: 'Equity'
+			},
+			lineWidth: 1,
+			gridLineDashStyle: 'longdash',
+			labels: {
+				formatter: function() {
+					return this.value.toFixed(pips);
+				}
+			}
+		}],
+	series: [
+		{
+			id: 'poolEquitySerie',
+			name: 'equity',
+			type: 'line',
+			color: 'blue',
+			data: dpsPE
+		}
+	]
+});
+
+
+var dpsPriceAsk = [];
+var dpsPriceBid = [];
+var priceChart = new Highcharts.StockChart("priceChart",{
+	title: {
+		text: sec + " Prices"
+	},
+	axisY:{
+		includeZero: false,
+		gridLineDashStyle: 'longdash'
+	},
+	yAxis: [
+		{
+			title: {
+				text: 'Prices'
+			},
+			lineWidth: 1,
+			gridLineDashStyle: 'longdash',
+			labels: {
+				formatter: function() {
+					return this.value.toFixed(pips);
+				}
+			}
+		}],
+	series: [
+		{
+			id: 'askSerie',
+			name: 'ask',
+			type: 'line',
+			color: 'blue',
+			data: dpsPriceAsk
+		}, {
+			id: 'bidSerie',
+			name: 'bid',
+			type: 'line',
+			color: 'red',
+			data: dpsPriceBid
+		}
+	]
+});
+
+var dpsInd = [];
+var dpsIndVol = [];
+var dpsIndBA = [];
+var dpsIndBB = [];
+var dpsIndBC = [];
+var indicatorChart = new Highcharts.StockChart("indicatorChart",{
+	title: {
+		text: sec + " Indicators"
+	},
+	yAxis: [
+		{
+			title: {
+				text: 'Prices'
+			},
+			height: '75%',
+			lineWidth: 1,
+			gridLineDashStyle: 'longdash',
+			plotLines: [
+				{
+					id: 'askPlotLine',
+					value: 0,
+					dashStyle: 'solid',
+					width: 1,
+					color: 'blue',
+					label: {
+						align: 'left',
+						style: {
+							fontStyle: 'bold'
+						},
+						text: 'ask', 
+						x: 0
+					}
+				}, {
+					id: 'bidPlotLine',
+					value: 0,
+					dashStyle: 'solid',
+					width: 1,
+					color: 'red',
+					label: {
+						align: 'left',
+						style: {
+							fontStyle: 'bold'
+						},
+						text: 'bid', 
+						x: 0
+					}
+				}
+			],
+			labels: {
+				formatter: function() {
+					return this.value.toFixed(pips);
+				}
+			}
+		}, {
+			title: {
+				text: 'Volume'
+			},
+			top: '80%',
+			height: '20%',
+			offset: 0,
+			lineWidth: 2
+		}],
+	legend: {
+		enabled: true,
+		labelFormatter: function () {
+			return this.name.split("-")[0];
+		}
+	},
+
+	series: [
+		{
+			id: 'candlestickSerie',
+			name: 'candlestick',
+			type: 'candlestick',
+			color: 'green',
+			data: dpsInd
+		}, {
+			id: 'volumeSerie',
+			name: 'Volume',
+			type: 'column',
+			color: 'green',
+			data: dpsIndVol,
+			yAxis: 1
+		}, {
+			id: 'BBAND-upperbandSerie',
+			name: 'BBAND-upperband',
+			type: 'line',
+			color: 'orange',
+			data: dpsIndBA,
+			yAxis: 0
+		}, {
+			linkedTo:':previous',
+			id: 'BBAND-middlebandSerie',
+			name: 'BBAND-middleband',
+			type: 'line',
+			color: 'orange',
+			data: dpsIndBB,
+			yAxis: 0
+		}, {
+			linkedTo:':previous',
+			id: 'BBAND-lowerbandSerie',
+			name: 'BBAND-lowerband',
+			type: 'line',
+			color: 'orange',
+			data: dpsIndBC,
+			yAxis: 0
+		}
+
+	]
+});
+
+
+var wrapper = Object.create(Wrapper);
+wrapper.url = "./";
+wrapper.user = "demo";
+wrapper.password = "demo";
+
+
+function reloadPricePolling(){
+	wrapper.getPricePolling([sec], null, "tob", 1, updatePricePolling);
+}
+
+function reloadOrderPolling(){
+	wrapper.getOrderPolling(null, null, null, updateOrderPolling);
+}
+
+function reloadPositionPolling(){
+	wrapper.getPositionPolling(null, null, null, updatePositionPolling);
+}
+
+function sell(){
+	var validity = null;
+	if (typeSell.value=="limit"){
+		validity = "day";
+	}
+	wrapper.setOrder(sec, tiSell.value, parseInt(quantitySell.value), "sell", typeSell.value, validity, parseFloat(priceSell.value), null, null, null, null, resSetOrder);
+}
+
+function buy(){
+	var validity = null;
+	if (typeBuy.value=="limit"){
+		validity = "day";
+	}
+	wrapper.setOrder(sec, tiBuy.value, parseInt(quantityBuy.value), "buy", typeBuy.value, validity, parseFloat(priceBuy.value), null, null, null, null, resSetOrder);
+}
+
+function cancelOrder(fixid){
+	wrapper.cancelOrder(fixid, resCancelOrder);
+}
+
+function modifyOrder(fixid, price, quantity){
+	var newprice = prompt("Please enter new price", price);
+	if (newprice!=null){
+		var newquantity = prompt("Please enter new quantity", quantity);
+		if (newquantity!=null){
+			wrapper.modifyOrder(fixid, parseFloat(newprice), parseInt(newquantity), resModifyOrder);
+		}
+	}
+}
+
+function resSetOrder(entry){
+	if (entry.hasOwnProperty('setOrderResponse')) {
+		if (entry.setOrderResponse.hasOwnProperty('order')) {
+			entry.setOrderResponse.order.forEach(function(order) {
+				var res = order.result;
+				var tempid = order.tempid;
+				alert("SET ORDER\n\nResult: " + res + "\nTempId: " + tempid);
+			});
+		}
+	}
+}
+
+function resCancelOrder(entry){
+	if (entry.hasOwnProperty('cancelOrderResponse')) {
+		if (entry.cancelOrderResponse.hasOwnProperty('order')) {
+			entry.cancelOrderResponse.order.forEach(function(order) {
+				var res = order.result;
+				var fixid = order.fixid;
+				alert("CANCEL ORDER\n\nResult: " + res + "\nFixId: " + fixid);
+			});
+		}
+	}
+}
+
+function resModifyOrder(entry){
+	if (entry.hasOwnProperty('modifyOrderResponse')) {
+		if (entry.modifyOrderResponse.hasOwnProperty('order')) {
+			entry.modifyOrderResponse.order.forEach(function(order) {
+				var res = order.result;
+				var fixid = order.fixid;
+				alert("MODIFY ORDER\n\nResult: " + res + "\nFixId: " + fixid);
+			});
+		}
+	}
+}
+
+function updatePricePolling(entry){
+	var ask;
+	var bid;
+	if (entry.hasOwnProperty('getPriceResponse')) {
+		if (entry.getPriceResponse.hasOwnProperty('tick')) {
+			entry.getPriceResponse.tick.forEach(function(tick) {
+				if (tick.side=="ask") {
+					pollingAsk.innerHTML = tick.price.toFixed(pips);
+					priceBuy.value = tick.price.toFixed(pips);
+				}
+				if (tick.side=="bid") {
+					pollingBid.innerHTML  = tick.price.toFixed(pips);
+					priceSell.value = tick.price.toFixed(pips);
+				}
+			});
+		}
+	}
+}
+
+function updateOrderPolling(entry){
+	var pollingPendingOrdersTable = document.getElementById("pollingPendingOrdersTable");
+	var plength = pollingPendingOrdersTable.rows.length;
+	for (var i=0; i<plength; i++){
+		pollingPendingOrdersTable.deleteRow(0);
+	}
+	var pollingClosedOrdersTable = document.getElementById("pollingClosedOrdersTable");
+	var slength = pollingClosedOrdersTable.rows.length;
+	for (var i=0; i<slength; i++){
+		pollingClosedOrdersTable.deleteRow(0);
+	}
+	if (entry.hasOwnProperty('getOrderResponse')) {
+		if (entry.getOrderResponse.hasOwnProperty('order')) {
+			entry.getOrderResponse.order.forEach(function(order) {
+				if (order.status=="pending") {
+					var row = pollingPendingOrdersTable.insertRow(pollingPendingOrdersTable.rows.length);
+					for (var j=0; j<11; j++){
+						row.insertCell(j);
+					}
+					fillPendingOrder(order, row);
+				}
+				else {
+					var row = pollingClosedOrdersTable.insertRow(pollingClosedOrdersTable.rows.length);
+					for (var j=0; j<11; j++){
+						row.insertCell(j);
+					}
+					fillClosedOrder(order, row);
+				}
+			});
+		}
+	}
+}
+
+function updatePositionPolling(entry){
+	var pollingSecurityPositionTable = document.getElementById("pollingSecurityPositionTable");
+	var slength = pollingSecurityPositionTable.rows.length;
+	for (var i=0; i<slength; i++){
+		pollingSecurityPositionTable.deleteRow(0);
+	}
+	var pollingAssetPositionTable = document.getElementById("pollingAssetPositionTable");
+	var alength = pollingAssetPositionTable.rows.length;
+	for (var i=0; i<alength; i++){
+		pollingAssetPositionTable.deleteRow(0);
+	}
+	if (entry.hasOwnProperty('getPositionResponse')) {
+		if (entry.getPositionResponse.hasOwnProperty('securityposition')) {
+			entry.getPositionResponse.securityposition.forEach(function(securityposition) {
+				var pollingSecurityPositionTable = document.getElementById("pollingSecurityPositionTable");
+				if (securityposition.account=="<AGGREGATED>"){
+					securityposition.account = "ALL";
+				}
+				var row = pollingSecurityPositionTable.insertRow(pollingSecurityPositionTable.rows.length);
+				for (var j=0; j<5; j++){
+					row.insertCell(j);
+				}
+				fillSecurityPosition(securityposition, row);
+			});
+		}
+		if (entry.getPositionResponse.hasOwnProperty('assetposition')) {
+			entry.getPositionResponse.assetposition.forEach(function(assetposition) {
+				var pollingAssetPositionTable = document.getElementById("pollingAssetPositionTable");
+				if (assetposition.account=="<AGGREGATED>"){
+					assetposition.account = "ALL";
+				}
+				var row = pollingAssetPositionTable.insertRow(pollingAssetPositionTable.rows.length);
+				for (var j=0; j<5; j++){
+					row.insertCell(j);
+				}
+				fillAssetPosition(assetposition, row);
+			});
+		}
+		if (entry.getPositionResponse.hasOwnProperty('accounting')) {
+			var accounting = entry.getPositionResponse.accounting
+			pollingm2mcurrency.innerHTML = accounting.m2mcurrency;
+			pollingstrategyPL.innerHTML = accounting.strategyPL;
+			pollingtotalequity.innerHTML = accounting.totalequity;
+			pollingusedmargin.innerHTML = accounting.usedmargin;
+			pollingfreemargin.innerHTML = accounting.freemargin;
+		}
+	}
+}
+
+function fillPendingOrder(order, row){
+	row.cells[0].innerHTML = order.tempid;
+	row.cells[1].innerHTML = order.orderid;
+	row.cells[2].innerHTML = order.fixid;
+	row.cells[3].innerHTML = order.tinterface;
+	row.cells[4].innerHTML = order.security;
+	row.cells[5].innerHTML = order.quantity;
+	row.cells[6].innerHTML = order.side;
+	row.cells[7].innerHTML = order.limitprice;
+	row.cells[8].innerHTML = order.timeinforce;
+	row.cells[9].innerHTML = '<button type="submit" onclick="javascript: modifyOrder(\''+order.fixid+'\',\''+order.limitprice+'\',\''+order.quantity+'\')">Modify</button>';
+	row.cells[10].innerHTML = '<button type="submit" onclick="javascript: cancelOrder(\''+order.fixid+'\')">Cancel</button>';
+}
+
+function fillClosedOrder(order, row){
+	row.cells[0].innerHTML = order.tempid;
+	row.cells[1].innerHTML = order.orderid;
+	row.cells[2].innerHTML = order.fixid;
+	row.cells[3].innerHTML = order.tinterface;
+	row.cells[4].innerHTML = order.security;
+	row.cells[5].innerHTML = order.finishedquantity;
+	row.cells[5].title = "Quantity requested: " + order.quantity;
+	row.cells[6].innerHTML = order.side;
+	row.cells[7].innerHTML = order.finishedprice;
+	row.cells[7].title = "Price at start: " + order.priceatstart;
+	row.cells[8].innerHTML = order.type;
+	row.cells[9].innerHTML = order.commission + order.commcurrency;
+	row.cells[10].innerHTML = order.status;
+	row.cells[10].title = "Reason: " + order.reason;
+}
+
+function fillSecurityPosition(securityposition, row){
+	row.cells[0].innerHTML = securityposition.account;
+	row.cells[1].innerHTML = securityposition.security;
+	row.cells[2].innerHTML = securityposition.exposure + "@" + securityposition.price;
+	row.cells[3].innerHTML = securityposition.side;
+	row.cells[4].innerHTML = securityposition.pl;
+}
+
+function fillAssetPosition(assetposition, row){
+	row.cells[0].innerHTML = assetposition.account;
+	row.cells[1].innerHTML = assetposition.asset;
+	row.cells[2].innerHTML = assetposition.exposure;
+	row.cells[3].innerHTML = assetposition.totalrisk;
+	row.cells[4].innerHTML = assetposition.pl;
+}
+
+
+function getPriceStreaming(){
+	wrapper.getPriceStreaming( [sec], null, "tob", 1, 1000, function processPrices(entry) {
+			if (entry.hasOwnProperty('getPriceResponse')) {
+				if (entry.getPriceResponse.hasOwnProperty('tick')) {
+					entry.getPriceResponse.tick.forEach(function(tick) {
+						if (tick.security==sec && tick.side=="ask") {
+							dpsPriceAsk.push({
+								x: parseFloat(entry.getPriceResponse.timestamp)*1000,
+								y: parseFloat(tick.price)
+							});
+							//priceChart.series[0].setData(dpsPriceAsk);
+							priceChart.get('askSerie').setData(dpsPriceAsk);
+							//indicatorChart.yAxis[0].options.plotLines[0].label.text=tick.price;
+							indicatorChart.yAxis[0].options.plotLines[0].value=tick.price;
+							streamingAsk.innerHTML = tick.price.toFixed(pips);
+						}
+						if (tick.security==sec && tick.side=="bid") {
+							dpsPriceBid.push({
+								x: parseFloat(entry.getPriceResponse.timestamp)*1000,
+								y: parseFloat(tick.price)
+							});
+							//priceChart.series[1].setData(dpsPriceBid);
+							priceChart.get('bidSerie').setData(dpsPriceBid);
+							//indicatorChart.yAxis[0].options.plotLines[1].label.text=tick.price;
+							indicatorChart.yAxis[0].options.plotLines[1].value=tick.price;
+							streamingBid.innerHTML = tick.price.toFixed(pips);
+						}
+					});
+					priceChart.render();
+				}
+			}
+		}
+	);
+}
+
+function getOrderStreaming(){
+	wrapper.getOrderStreaming( [sec], null, null, 1000, function processOrders(entry) {
+			if (entry.hasOwnProperty('getOrderResponse')) {
+				if (entry.getOrderResponse.hasOwnProperty('order')) {
+					entry.getOrderResponse.order.forEach(function(order) {
+						if (order.status=="pending") {
+							var streamingPendingOrdersTable = document.getElementById("streamingPendingOrdersTable");
+							var newrow = true;
+							for (var i=0; i<streamingPendingOrdersTable.rows.length; i++){
+								if (streamingPendingOrdersTable.rows[i].cells[1].innerHTML == order.orderid){
+									newrow = false;
+									fillPendingOrder(order, streamingPendingOrdersTable.rows[i]);
+									break;
+								}
+							}
+							if (newrow){
+								var row = streamingPendingOrdersTable.insertRow(streamingPendingOrdersTable.rows.length);
+								for (var j=0; j<11; j++){
+									row.insertCell(j);
+								}
+								fillPendingOrder(order, row);
+							}
+						}
+						else {
+							var streamingPendingOrdersTable = document.getElementById("streamingPendingOrdersTable");
+							for (var i=0; i<streamingPendingOrdersTable.rows.length; i++){
+								if (streamingPendingOrdersTable.rows[i].cells[1].innerHTML == order.orderid){
+									streamingPendingOrdersTable.deleteRow(i);
+									break;
+								}
+							}
+							var streamingClosedOrdersTable = document.getElementById("streamingClosedOrdersTable");
+							var newrow = true;
+							for (var i=0; i<streamingClosedOrdersTable.rows.length; i++){
+								if (streamingClosedOrdersTable.rows[i].cells[1].innerHTML == order.orderid){
+									newrow = false;
+									fillClosedOrder(order, streamingClosedOrdersTable.rows[i]);
+									break;
+								}
+							}
+							if (newrow){
+								var row = streamingClosedOrdersTable.insertRow(streamingClosedOrdersTable.rows.length);
+								for (var j=0; j<11; j++){
+									row.insertCell(j);
+								}
+								fillClosedOrder(order, row);
+							}
+						}
+					});
+				}
+			}
+		}
+	);
+}
+
+function getPositionStreaming(){
+	wrapper.getPositionStreaming( null, null, null, 1000, function processPosition(entry) {
+			if (entry.hasOwnProperty('getPositionResponse')) {
+				if (entry.getPositionResponse.hasOwnProperty('securityposition')) {
+					entry.getPositionResponse.securityposition.forEach(function(securityposition) {
+						var streamingSecurityPositionTable = document.getElementById("streamingSecurityPositionTable");
+						var newrow = true;
+						if (securityposition.account=="<AGGREGATED>"){
+							securityposition.account = "ALL";
+						}
+						for (var i=0; i<streamingSecurityPositionTable.rows.length; i++){
+							if (streamingSecurityPositionTable.rows[i].cells[0].innerHTML == securityposition.account && streamingSecurityPositionTable.rows[i].cells[1].innerHTML == securityposition.security){
+								newrow = false;
+								fillSecurityPosition(securityposition, streamingSecurityPositionTable.rows[i]);
+								break;
+							}
+						}
+						if (newrow){
+							var row = streamingSecurityPositionTable.insertRow(streamingSecurityPositionTable.rows.length);
+							for (var j=0; j<5; j++){
+								row.insertCell(j);
+							}
+							fillSecurityPosition(securityposition, row);
+						}
+					});
+				}
+				if (entry.getPositionResponse.hasOwnProperty('assetposition')) {
+					entry.getPositionResponse.assetposition.forEach(function(assetposition) {
+						var streamingAssetPositionTable = document.getElementById("streamingAssetPositionTable");
+						var newrow = true;
+						if (assetposition.account=="<AGGREGATED>"){
+							assetposition.account = "ALL";
+						}
+						for (var i=0; i<streamingAssetPositionTable.rows.length; i++){
+							if (streamingAssetPositionTable.rows[i].cells[0].innerHTML == assetposition.account && streamingAssetPositionTable.rows[i].cells[1].innerHTML == assetposition.asset){
+								newrow = false;
+								fillAssetPosition(assetposition, streamingAssetPositionTable.rows[i]);
+								break;
+							}
+						}
+						if (newrow){
+							var row = streamingAssetPositionTable.insertRow(streamingAssetPositionTable.rows.length);
+							for (var j=0; j<5; j++){
+								row.insertCell(j);
+							}
+							fillAssetPosition(assetposition, row);
+						}
+					});
+				}
+				if (entry.getPositionResponse.hasOwnProperty('accounting')) {
+					var accounting = entry.getPositionResponse.accounting
+					streamingm2mcurrency.innerHTML = accounting.m2mcurrency;
+					streamingstrategyPL.innerHTML = accounting.strategyPL;
+					streamingtotalequity.innerHTML = accounting.totalequity;
+					streamingusedmargin.innerHTML = accounting.usedmargin;
+					streamingfreemargin.innerHTML = accounting.freemargin;
+					var ts = parseFloat(entry.getPositionResponse.timestamp)*1000;
+					dpsSE.push([
+						ts,
+						accounting.strategyPL
+					]);
+					strategyEquityChart.get('strategyEquitySerie').setData(dpsSE);
+					dpsPE.push([
+						ts,
+						accounting.totalequity
+					]);
+					poolEquityChart.get('poolEquitySerie').setData(dpsPE);
+				}
+			}
+		}
+	);
+}
+
+
+function getIndicatorStreaming(){
+	wrapper.getIndicatorStreaming( [sec], null, "BBANDS", 50, 3, function processPrices(entry) {
+			if (entry.hasOwnProperty('getIndicatorResponse')) {
+				if (entry.getIndicatorResponse.hasOwnProperty('tick')) {
+					entry.getIndicatorResponse.tick.forEach(function(tick) {
+						var ts=0;
+						var tsArray=[];
+						if (tick.hasOwnProperty('candle')) {
+							tick.candle.forEach(function(candle) {
+								ts = parseFloat(candle.timestamp)*1000;
+								tsArray.push(ts);
+								if (tick.security==sec) {
+									dpsInd.push([
+										ts,
+										parseFloat(candle.open)/100000,
+										parseFloat(candle.high)/100000,
+										parseFloat(candle.low)/100000,
+										parseFloat(candle.close)/100000
+									]);
+									indicatorChart.get('candlestickSerie').setData(dpsInd);
+									dpsIndVol.push([
+										ts,
+										candle.ticks
+									]);
+									indicatorChart.get('volumeSerie').setData(dpsIndVol);
+								}
+							});
+						}
+						if (tick.hasOwnProperty('indicator')) {
+							tick.indicator.forEach(function(indicator) {
+								if (indicator.name=="BBANDS") {
+									var i;
+									for (i = 0; i < tsArray.length; i++) {
+										dpsIndBA.push([
+											tsArray[i],
+											indicator.upperband[i]/100000
+										]);
+										indicatorChart.get('BBAND-upperbandSerie').setData(dpsIndBA);
+										dpsIndBB.push([
+											tsArray[i],
+											indicator.middleband[i]/100000
+										]);
+										indicatorChart.get('BBAND-middlebandSerie').setData(dpsIndBB);
+										dpsIndBC.push([
+											tsArray[i],
+											indicator.lowerband[i]/100000
+										]);
+										indicatorChart.get('BBAND-lowerbandSerie').setData(dpsIndBC);
+									}
+								}
+							});
+						}
+					});
+					indicatorChart.render();
+				}
+			}
+		}
+	);
+}
+
+
+
+wrapper.getAuthentication()
+.then(function(resp){
+	getPriceStreaming();
+	getOrderStreaming();
+	getPositionStreaming();
+	getIndicatorStreaming();
+	reloadPricePolling();
+	reloadOrderPolling();
+	reloadPositionPolling();
+});
+
+
+
+</script>
+
+</body>
+</html>

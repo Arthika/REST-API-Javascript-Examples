@@ -1,0 +1,97 @@
+table.scroll {
+    border-spacing: 0;
+    border: 2px solid black;
+}
+
+table.scroll th,
+table.scroll td,
+table.scroll tr,
+table.scroll thead,
+table.scroll tbody { display: block; }
+
+table.scroll thead tr {
+    /* fallback */
+    width: 97%;
+    /* minus scroll bar width */
+    width: -webkit-calc(100% - 16px);
+    width:    -moz-calc(100% - 16px);
+    width:         calc(100% - 16px);
+}
+
+table.scroll tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+table.scroll tbody {
+    height: 120px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+table.scroll tbody td,
+table.scroll thead th {
+    width: 8.5%;
+    float: left;
+    border-right: 1px dashed black;
+    word-wrap: break-word;
+}
+
+table.scroll2 {
+    border-spacing: 0;
+    border: 2px solid black;
+}
+
+table.scroll2 th,
+table.scroll2 td,
+table.scroll2 tr,
+table.scroll2 thead,
+table.scroll2 tbody { display: block; }
+
+table.scroll2 thead tr {
+    /* fallback */
+    width: 97%;
+    /* minus scroll bar width */
+    width: -webkit-calc(100% - 16px);
+    width:    -moz-calc(100% - 16px);
+    width:         calc(100% - 16px);
+}
+
+table.scroll2 tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+table.scroll2 tbody {
+    height: 120px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+table.scroll2 tbody td,
+table.scroll2 thead th {
+    width: 19%;
+    float: left;
+    border-right: 1px dashed black;
+    word-wrap: break-word;
+}
+
+thead tr th { 
+    height: 30px;
+    line-height: 30px;
+    /*text-align: left;*/
+}
+
+tbody { border-top: 2px solid black; }
+
+tbody tr { 
+    border: 1px solid black;
+}
+
+tbody td:last-child, thead th:last-child {
+    border-right: none !important;
+}
