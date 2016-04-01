@@ -69,7 +69,6 @@
 		<td>BUY</td>
 		<td>
 			<select id="tiBuy">
-				<option value="LMAX_LMAX">LMAX_LMAX</option>
 			</select>
 		</td>
 		<td>
@@ -101,7 +100,6 @@
 		<td>SELL</td>
 		<td>
 			<select id="tiSell">
-				<option value="LMAX_LMAX">LMAX_LMAX</option>
 			</select>
 		</td>
 		<td>
@@ -581,6 +579,14 @@ wrapper.user = "demo";
 wrapper.password = "demo";
 
 
+function getInterface(){
+	wrapper.getInterface(updateInterfaces);
+}
+
+function getAccount(){
+	wrapper.getAccount(updateAccounts);
+}
+
 function reloadPricePolling(){
 	wrapper.getPricePolling([sec], null, "tob", 1, updatePricePolling);
 }
@@ -619,6 +625,35 @@ function modifyOrder(fixid, price, quantity){
 		var newquantity = prompt("Please enter new quantity", quantity);
 		if (newquantity!=null){
 			wrapper.modifyOrder(fixid, parseFloat(newprice), parseInt(newquantity), resModifyOrder);
+		}
+	}
+}
+
+function updateInterfaces(entry){
+	var ask;
+	var bid;
+	if (entry.hasOwnProperty('getInterfaceResponse')) {
+		if (entry.getInterfaceResponse.hasOwnProperty('tinterface')) {
+			var tiSell = document.getElementById("tiSell");
+			var tiBuy = document.getElementById("tiBuy");
+			entry.getInterfaceResponse.tinterface.forEach(function(tinterface) {
+				var optionSell = new Option(tinterface.name, tinterface.name);
+				var optionBuy = new Option(tinterface.name, tinterface.name);
+				tiSell.add(optionSell);
+				tiBuy.add(optionBuy);
+			});
+		}
+	}
+}
+
+function updateAccounts(entry){
+	var ask;
+	var bid;
+	if (entry.hasOwnProperty('getAccountResponse')) {
+		if (entry.getAccountResponse.hasOwnProperty('account')) {
+			entry.getAccountResponse.account.forEach(function(account) {
+				// Nothing
+			});
 		}
 	}
 }
@@ -1036,6 +1071,8 @@ function getIndicatorStreaming(){
 
 wrapper.getAuthentication()
 .then(function(resp){
+	getInterface();
+	getAccount();
 	getPriceStreaming();
 	getOrderStreaming();
 	getPositionStreaming();

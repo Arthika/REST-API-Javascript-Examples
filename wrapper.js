@@ -27,6 +27,26 @@ var Wrapper = {
 		return d.promise;
 	},
 
+	getInterface : function(callback) {
+		var url = this.url + "/fcgi-bin/IHFTRestAPI/getInterface";
+		var data = JSON.stringify( {
+			getInterface: {
+				user: this.user,
+				token: this.token
+		} } );
+		polling(url, data, callback);
+	},
+
+	getAccount: function(callback) {
+		var url = this.url + "/fcgi-bin/IHFTRestAPI/getAccount";
+		var data = JSON.stringify( {
+			getAccount: {
+				user: this.user,
+				token: this.token
+		} } );
+		polling(url, data, callback);
+	},
+
 	getPriceStreaming : function(seclist, tilist, gran, lev, int, callback) {
 		var url = this.url + "/cgi-bin/IHFTRestStreamer/getPrice";
 		var data = JSON.stringify( {
